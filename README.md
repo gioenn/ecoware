@@ -12,5 +12,5 @@ In the following repository you will find the components that builds our MAPE lo
 
 ### Old Components 
 
-- [Java sensor template](https://github.com/ deib-polimi/ecoware-monitoring/tree/master/ECoWare/ src/ecoware/ecowareaccessmanager)
-- [Monitoring and Analysis](https://github. com/deib-polimi/ecoware-monitoring) 
+- [Java sensor template](https://github.com/deib-polimi/ecoware-monitoring/tree/master/ECoWare/src/ecoware/ecowareaccessmanager)
+- [Monitoring and Analysis](https://github.com/deib-polimi/ecoware-monitoring) 
