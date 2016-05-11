@@ -1,0 +1,66 @@
+node_types:
+  ecoware.container:
+    properties:
+      image_type:
+        type: string
+      image:
+        type: string
+      ports_binding:
+        type: map
+        entry_schema:
+          type: integer
+      run_parameters:
+        type: string
+    interfaces:
+      on_dependency_scale:
+        description: "Hook called when one or more nodes of a dependent tier change"
+      on_node_scale:
+        description: "Hook called when the resources (cpu, memory) allocated to the container change"
+
+  ecoware.container.docker:
+    derived_from: ecoware.container
+    properties:
+      image_type: 'docker'
+
+  ecoware.tier:
+    properties:
+      name:
+        type: string
+      max_nodes:
+        type: integer
+      container_type:
+        type: ecoware.container
+      max_response_time:
+        type: float
+      depends_on:
+        type: list
+        entry_schema: string
+
+  ecoware.app:
+    properties:
+      name:
+        type: string
+      tiers:
+        type: list
+        entry_schema:
+          type: ecoware.tier
+
+  ecoware.infrastructure:
+    properties:
+      provider_name:
+        type: string
+      max_vms:
+        type: integer
+
+  ecoware.infrastructure.aws:
+    derived_from: ecoware.infrastructure
+    properties:
+      provider_name: 'aws-ec2'
+      api_key:
+        type: { get_input: aws_api_key }
+      api_secret:
+        type: { get_input: aws_api_secret }
+      vm_flavor:
+        type: string
+      vm_image:
+        type: string
