@@ -5,10 +5,9 @@ node_types:
         type: string
       image:
         type: string
-      ports_binding:
-        type: map
-        entry_schema:
-          type: integer
+      port_bindings:
+        type: list
+        entry_schema: map
       run_parameters:
         type: string
     interfaces:
@@ -41,9 +40,10 @@ node_types:
       name:
         type: string
       tiers:
-        type: list
+        type: list # I'm using list with singleton map inside to preserve order
         entry_schema:
-          type: ecoware.tier
+          type: map
+          entry_schema: ecoware.tier
 
   ecoware.infrastructure:
     properties:
