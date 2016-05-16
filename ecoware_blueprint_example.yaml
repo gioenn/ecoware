@@ -1,0 +1,122 @@
+imports: ['https://raw.githubusercontent.com/deib-polimi/ecoware/master/ecoware.yaml']
+inputs:
+  aws_api_key: {}
+  aws_api_secret: {}
+
+# topology_template?
+
+node_templates:
+  infrastructure:
+      type: ecoware.infrastructure.aws
+      properties:
+        max_vms: 10
+        vm_flavor: 't2.medium'
+        vm_image: 'ami−eff8148f'
+
+  rubis:
+    type: ecoware.app
+    properties:
+      name: 'RUBiS'
+      tiers:
+        - lb:
+            type: ecoware.tier
+            properties:
+              name: 'Loadbalancer'
+              max_nodes: 1
+              max_response_time: 0.2
+              depends_on:
+                  - 'jboss'
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'tutum/haproxy'
+                    port_bindings:
+                      - 80:80
+                  interfaces:
+                    on_dependency_scale: 'home/lb_dep_scale.sh'
+        - jboss:
+            type: ecoware.tier
+            properties:
+              name: 'Business Logic'
+              max_response_time: 0.6
+              depends_on:
+                  - 'mysql'
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'polimi/rubis-jboss'
+                    port_bindings:
+                      - 8080:80
+                    run_parameters: "/opt/jboss −4.2.2.GA/bin/run.sh −−host=0.0.0.0 −−bootdir=/opt/rubis/rubis−cvs−2008−02−25/Servlets Hibernate −c default"
+                  interfaces:
+                    on_dependency_scale: 'home/jb_dep_scale.sh'
+                    on_node_scale: 'home/jb_node_scale.sh'
+        - mysql:
+            type: ecoware.tier
+            properties:
+              name: 'Data tier'
+              max_response_time: 0.3
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'mysql'
+                    max_nodes: 1
+                    port_bindings:
+                      - 3306:3306
+                  interfaces:
+                    on_node_scale: 'home/sql_node_scale.sh'
+
+  pwitter:
+    type: ecoware.app
+    properties:
+      name: 'Pwitter'
+      tiers:
+        - lb:
+            type: ecoware.tier
+            properties:
+              name: 'Loadbalancer'
+              max_nodes: 1
+              max_response_time: 0.2
+              depends_on:
+                  - 'gunicorn'
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'tutum/haproxy'
+                    port_bindings:
+                      - 8000:80
+                  interfaces:
+                    on_dependency_scale: 'home/lb_dep_scale.sh'
+        - gunicorn:
+            type: ecoware.tier
+            properties:
+              name: 'Business Logic'
+              max_response_time: 0.4
+              depends_on:
+                  - 'redis'
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'polimi/pwitter-web'
+                    port_bindings:
+                      - 8081:80
+                    run_parameters: "w 3 −k eventlet"
+                  interfaces:
+                    on_dependency_scale: 'home/gun_dep_scale.sh'
+                    on_node_scale: 'home/gun_node_scale.sh'
+        - redis:
+            type: ecoware.tier
+            properties:
+              name: 'Data tier'
+              max_response_time: 0.3
+              depends_on:
+                  - 'db'
+              container_type:
+                  type: ecoware.container.docker
+                  properties:
+                    image: 'redis'
+                    max_nodes: 1
+                    port_bindings:
+                      - 6379:6379
+                  interfaces:
+                    on_node_scale: 'home/redis_node_scale.sh'

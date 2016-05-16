@@ -1,0 +1,97 @@
+{
+    "apps": [
+        {
+            "name": "RUBiS",
+            "tiers": {
+                "lb": {
+                    "max_rt": 0.2,
+                    "name": "Loadbalancer",
+                    "max_nodes": 1,
+                    "on_dependency_scale": "home/lb_dep_scale.sh",
+                    "depends_on": [
+                        "jboss"
+                    ],
+                    "port_bindings": [
+                        "80:80"
+                    ],
+                    "docker_image": "tutum/haproxy"
+                },
+                "jboss": {
+                    "max_rt": 0.6,
+                    "on_node_scale": "home/jb_node_scale.sh",
+                    "name": "Business Logic",
+                    "depends_on": [
+                        "mysql"
+                    ],
+                    "on_dependency_scale": "home/jb_dep_scale.sh",
+                    "run_parameters": "/opt/jboss −4.2.2.GA/bin/run.sh −−host=0.0.0.0 −−bootdir=/opt/rubis/rubis−cvs−2008−02−25/Servlets Hibernate −c default",
+                    "port_bindings": [
+                        "8080:80"
+                    ],
+                    "docker_image": "polimi/rubis-jboss"
+                },
+                "mysql": {
+                    "max_rt": 0.3,
+                    "port_bindings": [
+                        "3306:3306"
+                    ],
+                    "on_node_scale": "home/sql_node_scale.sh",
+                    "name": "Data tier",
+                    "docker_image": "mysql"
+                }
+            }
+        },
+        {
+            "name": "Pwitter",
+            "tiers": {
+                "lb": {
+                    "max_rt": 0.2,
+                    "name": "Loadbalancer",
+                    "max_nodes": 1,
+                    "on_dependency_scale": "home/lb_dep_scale.sh",
+                    "depends_on": [
+                        "gunicorn"
+                    ],
+                    "port_bindings": [
+                        "8000:80"
+                    ],
+                    "docker_image": "tutum/haproxy"
+                },
+                "gunicorn": {
+                    "max_rt": 0.4,
+                    "on_node_scale": "home/gun_node_scale.sh",
+                    "name": "Business Logic",
+                    "depends_on": [
+                        "redis"
+                    ],
+                    "on_dependency_scale": "home/gun_dep_scale.sh",
+                    "run_parameters": "w 3 −k eventlet",
+                    "port_bindings": [
+                        "8081:80"
+                    ],
+                    "docker_image": "polimi/pwitter-web"
+                },
+                "redis": {
+                    "max_rt": 0.3,
+                    "on_node_scale": "home/redis_node_scale.sh",
+                    "name": "Data tier",
+                    "depends_on": [
+                        "db"
+                    ],
+                    "port_bindings": [
+                        "6379:6379"
+                    ],
+                    "docker_image": "redis"
+                }
+            }
+        }
+    ],
+    "infrastructure": {
+        "cloud_driver": {
+            "vm_image": "ami−eff8148f",
+            "name": "aws-ec2",
+            "vm_flavor": "t2.medium"
+        },
+        "max_vms": 10
+    }
+}
