@@ -23,7 +23,8 @@ node_templates:
             properties:
               name: 'Loadbalancer'
               max_nodes: 1
-              max_response_time: 0.2
+              thresholds:
+                max_rt : 0.2
               depends_on:
                   - 'jboss'
               container_type:
@@ -38,7 +39,8 @@ node_templates:
             type: ecoware.tier
             properties:
               name: 'Business Logic'
-              max_response_time: 0.6
+              thresholds:
+                max_rt : 0.6
               depends_on:
                   - 'mysql'
               container_type:
@@ -55,7 +57,8 @@ node_templates:
             type: ecoware.tier
             properties:
               name: 'Data tier'
-              max_response_time: 0.3
+              thresholds:
+                max_rt : 0.3
               container_type:
                   type: ecoware.container.docker
                   properties:
@@ -76,7 +79,8 @@ node_templates:
             properties:
               name: 'Loadbalancer'
               max_nodes: 1
-              max_response_time: 0.2
+              thresholds:
+                max_rt : 0.2
               depends_on:
                   - 'gunicorn'
               container_type:
@@ -91,7 +95,8 @@ node_templates:
             type: ecoware.tier
             properties:
               name: 'Business Logic'
-              max_response_time: 0.4
+              thresholds:
+                max_rt : 0.4
               depends_on:
                   - 'redis'
               container_type:
@@ -108,7 +113,8 @@ node_templates:
             type: ecoware.tier
             properties:
               name: 'Data tier'
-              max_response_time: 0.3
+              thresholds:
+                max_rt : 0.3
               depends_on:
                   - 'db'
               container_type:

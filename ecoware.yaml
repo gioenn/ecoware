@@ -29,8 +29,8 @@ node_types:
         type: integer
       container_type:
         type: ecoware.container
-      max_response_time:
-        type: float
+      thresholds:
+        type: map
       depends_on:
         type: list
         entry_schema: string
@@ -51,16 +51,16 @@ node_types:
         type: string
       max_vms:
         type: integer
+      vm_flavor:
+          type: string
+      vm_image:
+          type: string
+      api_key:
+        type: { get_input: api_key }
+      api_secret:
+        type: { get_input: api_secret }
 
   ecoware.infrastructure.aws:
     derived_from: ecoware.infrastructure
     properties:
       provider_name: 'aws-ec2'
-      api_key:
-        type: { get_input: aws_api_key }
-      api_secret:
-        type: { get_input: aws_api_secret }
-      vm_flavor:
-        type: string
-      vm_image:
-        type: string
