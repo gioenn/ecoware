@@ -1,4 +1,4 @@
-imports: ['https://raw.githubusercontent.com/deib-polimi/ecoware/master/ecoware.yaml']
+imports: ['https://raw.githubusercontent.com/deib-polimi/microcloud/master/microcloud.yaml']
 inputs:
   aws_api_key: {}
   aws_api_secret: {}
@@ -7,19 +7,19 @@ inputs:
 
 node_templates:
   infrastructure:
-      type: ecoware.infrastructure.aws
+      type: microcloud.infrastructure.aws
       properties:
         max_vms: 10
         vm_flavor: 't2.medium'
         vm_image: 'ami−eff8148f'
 
   rubis:
-    type: ecoware.app
+    type: microcloud.app
     properties:
       name: 'RUBiS'
       tiers:
         - lb:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Loadbalancer'
               max_nodes: 1
@@ -28,7 +28,7 @@ node_templates:
               depends_on:
                   - 'jboss'
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'tutum/haproxy'
                     port_bindings:
@@ -36,7 +36,7 @@ node_templates:
                   interfaces:
                     on_dependency_scale: 'home/lb_dep_scale.sh'
         - jboss:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Business Logic'
               thresholds:
@@ -44,7 +44,7 @@ node_templates:
               depends_on:
                   - 'mysql'
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'polimi/rubis-jboss'
                     port_bindings:
@@ -54,13 +54,13 @@ node_templates:
                     on_dependency_scale: 'home/jb_dep_scale.sh'
                     on_node_scale: 'home/jb_node_scale.sh'
         - mysql:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Data tier'
               thresholds:
                 max_rt : 0.3
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'mysql'
                     max_nodes: 1
@@ -70,12 +70,12 @@ node_templates:
                     on_node_scale: 'home/sql_node_scale.sh'
 
   pwitter:
-    type: ecoware.app
+    type: microcloud.app
     properties:
       name: 'Pwitter'
       tiers:
         - lb:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Loadbalancer'
               max_nodes: 1
@@ -84,7 +84,7 @@ node_templates:
               depends_on:
                   - 'gunicorn'
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'tutum/haproxy'
                     port_bindings:
@@ -92,7 +92,7 @@ node_templates:
                   interfaces:
                     on_dependency_scale: 'home/lb_dep_scale.sh'
         - gunicorn:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Business Logic'
               thresholds:
@@ -100,7 +100,7 @@ node_templates:
               depends_on:
                   - 'redis'
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'polimi/pwitter-web'
                     port_bindings:
@@ -110,7 +110,7 @@ node_templates:
                     on_dependency_scale: 'home/gun_dep_scale.sh'
                     on_node_scale: 'home/gun_node_scale.sh'
         - redis:
-            type: ecoware.tier
+            type: microcloud.tier
             properties:
               name: 'Data tier'
               thresholds:
@@ -118,7 +118,7 @@ node_templates:
               depends_on:
                   - 'db'
               container_type:
-                  type: ecoware.container.docker
+                  type: microcloud.container.docker
                   properties:
                     image: 'redis'
                     max_nodes: 1

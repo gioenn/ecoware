@@ -7,8 +7,8 @@ import json
 import codecs
 import collections
 
-ECOWARE_INFRASTRUCTURE_TYPE = 'ecoware.infrastructure'
-ECOWARE_APP_TYPE = 'ecoware.app'
+MICROCLOUD_INFRASTRUCTURE_TYPE = 'microcloud.infrastructure'
+MICROCLOUD_APP_TYPE = 'microcloud.app'
 
 IMPORTS_KEY = 'imports'
 INPUTS_KEY = 'inputs'
@@ -20,13 +20,13 @@ PROPERTIES_KEY = 'properties'
 INTERFACES_KEY = 'interfaces'
 GET_INPUT_KEY = 'get_input'
 
-ECOWARE_APP_TIERS_KEY = 'tiers'
-ECOWARE_APP_NAME_KEY = 'name'
-ECOWARE_MAX_VMS_KEY = 'max_vms'
-ECOWARE_CONTAINER_TYPE_KEY = 'container_type'
-ECOWARE_CONTAINER_IMAGE_TYPE_KEY = 'image_type'
-ECOWARE_CONTAINER_IMAGE_KEY = 'image'
-ECOWARE_THRESHOLDS_KEY = 'thresholds'
+MICROCLOUD_APP_TIERS_KEY = 'tiers'
+MICROCLOUD_APP_NAME_KEY = 'name'
+MICROCLOUD_MAX_VMS_KEY = 'max_vms'
+MICROCLOUD_CONTAINER_TYPE_KEY = 'container_type'
+MICROCLOUD_CONTAINER_IMAGE_TYPE_KEY = 'image_type'
+MICROCLOUD_CONTAINER_IMAGE_KEY = 'image'
+MICROCLOUD_THRESHOLDS_KEY = 'thresholds'
 
 ECOWARE_JSON_APP_NAME_KEY = 'name'
 ECOWARE_JSON_APP_TIERS_KEY = 'tiers'
@@ -126,25 +126,25 @@ res = collections.OrderedDict({})
 res[ECOWARE_JSON_APPS_KEY] = []
 
 for key, value in nodeTemplates.items():
-    if nodeTempleteIsA(value, ECOWARE_INFRASTRUCTURE_TYPE, ecowareLib):
+    if nodeTempleteIsA(value, MICROCLOUD_INFRASTRUCTURE_TYPE, ecowareLib):
         nodeTemplate = flatNodeProperties(value, ecowareLib, inputs)
         res[ECOWARE_JSON_INFRASTRUCTURE_KEY] = {}
         res[ECOWARE_JSON_INFRASTRUCTURE_KEY][ECOWARE_JSON_CLOUD_DRIVER_KEY] = bindDic(nodeTemplate[PROPERTIES_KEY], ECOWARE_TOSCA_JSON_CLOUD_DRIVER_BINDINGS, {})
-        res[ECOWARE_JSON_INFRASTRUCTURE_KEY][ECOWARE_JSON_MAX_VMS_KEY] = nodeTemplate[PROPERTIES_KEY][ECOWARE_MAX_VMS_KEY]
-    elif nodeTempleteIsA(value, ECOWARE_APP_TYPE, ecowareLib):
+        res[ECOWARE_JSON_INFRASTRUCTURE_KEY][ECOWARE_JSON_MAX_VMS_KEY] = nodeTemplate[PROPERTIES_KEY][MICROCLOUD_MAX_VMS_KEY]
+    elif nodeTempleteIsA(value, MICROCLOUD_APP_TYPE, ecowareLib):
         nodeTemplate = flatNodeProperties(value, ecowareLib, inputs)
         app = collections.OrderedDict({})
-        app[ECOWARE_APP_NAME_KEY] =  nodeTemplate[PROPERTIES_KEY][ECOWARE_APP_NAME_KEY]
+        app[MICROCLOUD_APP_NAME_KEY] =  nodeTemplate[PROPERTIES_KEY][MICROCLOUD_APP_NAME_KEY]
 
         app[ECOWARE_JSON_APP_TIERS_KEY] = collections.OrderedDict({})
-        for tierObj in nodeTemplate[PROPERTIES_KEY][ECOWARE_APP_TIERS_KEY]:
+        for tierObj in nodeTemplate[PROPERTIES_KEY][MICROCLOUD_APP_TIERS_KEY]:
             key, tier = tierObj.popitem()
             jsonTier = bindDic(tier[PROPERTIES_KEY], ECOWARE_TOSCA_JSON_TIER_BINDINGS, {})
-            for thresholdKey, thresholdValue  in tier[PROPERTIES_KEY][ECOWARE_THRESHOLDS_KEY].items():
+            for thresholdKey, thresholdValue  in tier[PROPERTIES_KEY][MICROCLOUD_THRESHOLDS_KEY].items():
                 jsonTier[thresholdKey]=thresholdValue
-            containerType = tier[PROPERTIES_KEY][ECOWARE_CONTAINER_TYPE_KEY]
+            containerType = tier[PROPERTIES_KEY][MICROCLOUD_CONTAINER_TYPE_KEY]
             jsonTier = bindDic(containerType[PROPERTIES_KEY], ECOWARE_TOSCA_JSON_CONTAINER_TYPE_BINDINGS, jsonTier)
-            jsonTier[containerType[PROPERTIES_KEY][ECOWARE_CONTAINER_IMAGE_TYPE_KEY]+ECOWARE_JSON_CONTAINER_IMAGE_SUFFIX_KEY] = containerType[PROPERTIES_KEY][ECOWARE_CONTAINER_IMAGE_KEY]
+            jsonTier[containerType[PROPERTIES_KEY][MICROCLOUD_CONTAINER_IMAGE_TYPE_KEY]+ECOWARE_JSON_CONTAINER_IMAGE_SUFFIX_KEY] = containerType[PROPERTIES_KEY][MICROCLOUD_CONTAINER_IMAGE_KEY]
             jsonTier = bindDic(containerType[INTERFACES_KEY], ECOWARE_TOSCA_JSON_CONTAINER_TYPE_BINDINGS, jsonTier)
             app[ECOWARE_JSON_APP_TIERS_KEY][key] = jsonTier
 
