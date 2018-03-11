@@ -2,7 +2,7 @@
 
 Welcome to the ECoWare initiative page.
 
-In the following repository you will find the components that builds our MAPE loop.
+In the following repositories you will find the components that builds our MAPE loop.
 
 ### New Components (FSE '16)
 - [Sy: a sensor for containeirs](https://github.com/deib-polimi/sy)
